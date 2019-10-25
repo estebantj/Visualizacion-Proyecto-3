@@ -7,7 +7,7 @@ int screenHeight = 768;
 Minim minim;
 AudioPlayer song;
 FFT fft;
-String songName = "lifetime.mp3";
+String songName = "Complicated.mp3";
 
 // Variables que definen las "zonas" del espectro
 // Por ejemplo, para graves, tomamos solo el primer 4% del espectro total
@@ -34,9 +34,11 @@ float oldScoreHi = scoreHi;
 
 ArrayList<Poligono> poligonos;
 
+float z;
+
 void setup() {
-	//surface.setSize(screenWidth, screenHeight);
-	fullScreen();
+	size(1366, 768, P3D);
+	//fullScreen(P3D);
 	poligonos = new ArrayList<Poligono>();
 
 	minim = new Minim(this);
@@ -46,18 +48,21 @@ void setup() {
 	fft = new FFT(song.bufferSize(), song.sampleRate());
 	// Se reproduce la cancion
 	song.play(0);
-
 }      
 
 void draw() {
-	translate(width/2, height/2);
 	background(0);
+	translate(width/2, height/2, 0);
 
 	// first perform a forward fft on one of song's buffers
 	fft.forward(song.mix);
-	
-	while (poligonos.size() < 100) {
-		poligonos.add(new Poligono(0, 0, 30));
+	//println("fft: "+fft.getBand(0));
+	print("Graves avg: "+fft.calcAvg(50, 250));
+	print(" Medios avg: "+fft.calcAvg(250, 1500));
+	print(" Agudos avg: "+fft.calcAvg(1500, 10000));
+	println("\n--");
+	while (poligonos.size() < 50) {
+		poligonos.add(new Poligono(random(-width/2, width/2), random(-height/2, height/2), random(-600,-300), 50));
 	}
 
 	oldScoreLow = scoreLow;
@@ -79,9 +84,48 @@ void draw() {
 	for(int i = (int)(fft.specSize()*specMid); i < fft.specSize()*specHi; i++) {
 		scoreHi += fft.getBand(i);
 	}
+
+	if (oldScoreLow > scoreLow) {
+    scoreLow = oldScoreLow - scoreDecreaseRate;
+	}
+
+	if (oldScoreMid > scoreMid) {
+		scoreMid = oldScoreMid - scoreDecreaseRate;
+	}
+
+	if (oldScoreHi > scoreHi) {
+		scoreHi = oldScoreHi - scoreDecreaseRate;
+	}
 	
+	//println(scoreLow, scoreMid, scoreHi);
+
+	stroke(255, 255, 255);
+	line(-width, -height, -500, -50, -50, -1000);	// Linea arriba izquierda
+	line(width, -height, -500, 50, -50, -1000);	// Linea arriba derecha
+
+	line(-width, height, -500, -50, 50 ,-1000); // Linea abajo izquierda
+	line(width, height, -500, 50, 50, -1000);	// Linea abajo derecha
+
+	color displayColor = color(0,scoreHi,0);
+	fill(displayColor);
+	strokeWeight(0);
+	beginShape();
+	vertex(-width, -height, -500);
+	vertex(-width, height, -500);
+	vertex(-50, 50 ,-1000);
+	vertex(-50, -50, -1000);
+	endShape(); 
+
+	beginShape();
+	vertex(width, -height, -500);
+	vertex(width, height, -500);
+	vertex(50, 50, -1000);
+	vertex(50, -50, -1000);
+	endShape();
+
+	//triangle(0, -height/3, -width/3, height/3, width/3, height/3);
+	//background(0, scoreMid*0.67, 0);
 	float scoreGlobal = 0.66*scoreLow + 0.8*scoreMid + 1*scoreHi;
-	
 	for (int index=0; index<poligonos.size(); index++) {
 		Poligono poligonoactual = poligonos.get(index);
 		poligonoactual.update();
@@ -91,5 +135,5 @@ void draw() {
 			float bandValue = fft.getBand(index);
 			poligonoactual.show(scoreLow, scoreMid, scoreHi, bandValue, scoreGlobal);
 		}
-	}
+	}	
 }
