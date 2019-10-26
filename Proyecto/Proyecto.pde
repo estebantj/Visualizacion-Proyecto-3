@@ -1,13 +1,13 @@
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 
-int screenWidth = 1366;
-int screenHeight = 768;
+int screenWidth = 300;
+int screenHeight = 300;
 
 Minim minim;
 AudioPlayer song;
 FFT fft;
-String songName = "lifetime.mp3";
+String songName = "hydrogen.mp3";
 
 // Variables que definen las "zonas" del espectro
 // Por ejemplo, para graves, tomamos solo el primer 4% del espectro total
@@ -35,8 +35,8 @@ float oldScoreHi = scoreHi;
 ArrayList<Poligono> poligonos;
 
 void setup() {
-	//surface.setSize(screenWidth, screenHeight);
-	fullScreen();
+	surface.setSize(screenWidth, screenHeight);
+	//fullScreen();
 	poligonos = new ArrayList<Poligono>();
 
 	minim = new Minim(this);
@@ -55,7 +55,15 @@ void draw() {
 
 	// first perform a forward fft on one of song's buffers
 	fft.forward(song.mix);
-	
+
+  // Test triangles
+  /*
+  stroke(0, 0, 255);
+  triangle(0, -10, -10, 10, 10, 10);
+  triangle(0, -20, -20, 20, 20, 20);
+  triangle(0, -30, -30, 30, 30, 30);
+  */  
+  
 	while (poligonos.size() < 100) {
 		poligonos.add(new Poligono(0, 0, 30));
 	}
@@ -69,7 +77,7 @@ void draw() {
 	scoreHi = 0;
 
 	for(int i= 0; i < fft.specSize()*specLow; i++) {
-		scoreLow += fft.getBand(i);
+		scoreLow += fft.getBand(i);   
 	}
 
 	for(int i = (int)(fft.specSize()*specLow); i < fft.specSize()*specMid; i++) {
@@ -92,4 +100,7 @@ void draw() {
 			poligonoactual.show(scoreLow, scoreMid, scoreHi, bandValue, scoreGlobal);
 		}
 	}
+
+  //if()
+  
 }
