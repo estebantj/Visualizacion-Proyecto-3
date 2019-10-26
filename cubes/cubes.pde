@@ -44,7 +44,7 @@ void setup()
   minim = new Minim(this);
  
   //Charger la chanson
-  song = minim.loadFile("remix2.mp3");
+  song = minim.loadFile("remix.mp3");
   
   //Créer l'objet FFT pour analyser la chanson
   fft = new FFT(song.bufferSize(), song.sampleRate());

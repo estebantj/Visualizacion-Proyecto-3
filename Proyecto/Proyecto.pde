@@ -7,7 +7,7 @@ int screenHeight = 768;
 Minim minim;
 AudioPlayer song;
 FFT fft;
-String songName = "Complicated.mp3";
+String songName = "Bittersweet.mp3";
 
 // Variables que definen las "zonas" del espectro
 // Por ejemplo, para graves, tomamos solo el primer 4% del espectro total
@@ -34,7 +34,7 @@ float oldScoreHi = scoreHi;
 
 ArrayList<Poligono> poligonos;
 
-float z;
+int tiempoAnterior;
 
 void setup() {
 	size(1366, 768, P3D);
@@ -48,6 +48,7 @@ void setup() {
 	fft = new FFT(song.bufferSize(), song.sampleRate());
 	// Se reproduce la cancion
 	song.play(0);
+	tiempoAnterior = millis();
 }      
 
 void draw() {
@@ -56,15 +57,24 @@ void draw() {
 
 	// first perform a forward fft on one of song's buffers
 	fft.forward(song.mix);
-	//println("fft: "+fft.getBand(0));
+	/*
+	println("fft: "+fft.getBand(0));
 	print("Graves avg: "+fft.calcAvg(50, 250));
 	print(" Medios avg: "+fft.calcAvg(250, 1500));
 	print(" Agudos avg: "+fft.calcAvg(1500, 10000));
 	println("\n--");
 	while (poligonos.size() < 50) {
-		poligonos.add(new Poligono(random(-width/2, width/2), random(-height/2, height/2), random(-600,-300), 50));
+		poligonos.add(new Poligono(random(-width/2, width/2), random(-height/2, height/2), random(-800,-500), 50));
 	}
-
+	*/
+	int tiempoActual = millis();
+	if (tiempoActual - tiempoAnterior >= 1000) {
+		for (int i=0; i<5; i++) {
+			poligonos.add(new Poligono(random(-width/2, width/2), random(-height/2, height/2), random(-1500,-1000), 50));
+		}
+		tiempoAnterior = millis();
+	}
+	println("Size: "+poligonos.size());
 	oldScoreLow = scoreLow;
 	oldScoreMid = scoreMid;
 	oldScoreHi = scoreHi;
@@ -84,7 +94,7 @@ void draw() {
 	for(int i = (int)(fft.specSize()*specMid); i < fft.specSize()*specHi; i++) {
 		scoreHi += fft.getBand(i);
 	}
-
+	/*
 	if (oldScoreLow > scoreLow) {
     scoreLow = oldScoreLow - scoreDecreaseRate;
 	}
@@ -96,40 +106,57 @@ void draw() {
 	if (oldScoreHi > scoreHi) {
 		scoreHi = oldScoreHi - scoreDecreaseRate;
 	}
-	
+	*/
 	//println(scoreLow, scoreMid, scoreHi);
-
+	/*
 	stroke(255, 255, 255);
 	line(-width, -height, -500, -50, -50, -1000);	// Linea arriba izquierda
 	line(width, -height, -500, 50, -50, -1000);	// Linea arriba derecha
 
 	line(-width, height, -500, -50, 50 ,-1000); // Linea abajo izquierda
 	line(width, height, -500, 50, 50, -1000);	// Linea abajo derecha
+	*/
 
+	/* 
+		Rectangulos a ambos lados de la pantalla, scoreHi se utiliza para definir la cantidad de verde
+		del color de ambos rectangulos.
+	*/
 	color displayColor = color(0,scoreHi,0);
 	fill(displayColor);
 	strokeWeight(0);
+
 	beginShape();
 	vertex(-width, -height, -500);
 	vertex(-width, height, -500);
-	vertex(-50, 50 ,-1000);
-	vertex(-50, -50, -1000);
+	vertex(-500, 50 ,-1000);
+	vertex(-500, -50, -1000);
 	endShape(); 
 
 	beginShape();
 	vertex(width, -height, -500);
 	vertex(width, height, -500);
-	vertex(50, 50, -1000);
-	vertex(50, -50, -1000);
+	vertex(500, 50, -1000);
+	vertex(500, -50, -1000);
 	endShape();
 
-	//triangle(0, -height/3, -width/3, height/3, width/3, height/3);
-	//background(0, scoreMid*0.67, 0);
+	// Cuadrado negro creado antes de la zona de creacion de cubos, asi no se nota donde aparecen los nuevos objetos.
+	fill(0);
+	beginShape();
+	vertex(-width/2, -height/2,-1000);
+	vertex(-width/2, height/2,-1000);
+	vertex(width/2, height/2,-1000);
+	vertex(width/2, -height/2,-1000);
+	endShape();
+
+	// Volumen para todas las frecuencias en este momento, con los sonidos más altos más altos.
+    // Esto permite que la animación vaya más rápido para sonidos de tono más alto, lo que es más notable
 	float scoreGlobal = 0.66*scoreLow + 0.8*scoreMid + 1*scoreHi;
+	//println("scoreGlobal: "+scoreGlobal);
 	for (int index=0; index<poligonos.size(); index++) {
 		Poligono poligonoactual = poligonos.get(index);
 		poligonoactual.update();
 		if (poligonoactual.checkOffScreen()) {
+			println(poligonoactual.ubicacion.z);
 			poligonos.remove(index);
 		} else {
 			float bandValue = fft.getBand(index);
