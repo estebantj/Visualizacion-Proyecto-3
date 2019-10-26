@@ -14,5 +14,4 @@ class Vector {
 		this.y = pY;
 		this.z = pZ;
 	}
-
 }

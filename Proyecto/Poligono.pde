@@ -7,22 +7,19 @@ class Poligono {
 	float radio;
 
 	Poligono(float pX, float pY, float pZ, float pRadio) {
-		opcion = int(random(0,2));
 		this.radio = pRadio;
 		ubicacion = new Vector(pX, pY, pZ);
-		direccion = new Vector(random(-1.5, 1.5), random(-1.5, 1.5), 1);
 		rotacion = new Vector(random(-1.5, 1.5), random(-1.5, 1.5));
 	}
 
-	void update() {
-		//this.radio += 2;
-		//this.ubicacion.x += this.direccion.x;
-		//this.ubicacion.y -= this.direccion.y;
-		this.ubicacion.z += 2;
+	void update(float volumen) {
+		this.ubicacion.z += (2 + (volumen/100));
+		this.rotacion.x += (volumen/3000);
+		//this.rotacion.y += (volumen/3000);
 	}
 
 
-	void show(float scoreLow, float scoreMid, float scoreHi, float intensity, float scoreGlobal) {
+	void show(float scoreLow, float scoreMid, float scoreHi, float intensity) {
 		pushMatrix();
 		
 		color strokeColor = color(50, 0, scoreMid);
@@ -36,30 +33,11 @@ class Poligono {
     	rotateX(this.rotacion.x);
 		rotateY(this.rotacion.y);
 		box(this.radio);
+
 		popMatrix();
-		/*
-		if (this.opcion == 0) {
-			color displayColor = color(scoreLow*0.67, 0, 0);
-			fill(displayColor, 255);
-			color strokeColor = color(255, 150-(20*intensity));
-			stroke(strokeColor);
-			strokeWeight(1 + (scoreGlobal/300));
-			circle(this.ubicacion.x, this.ubicacion.y, this.radio);
-		} else if  (this.opcion == 1) {
-			color displayColor = color(0, 0, scoreHi*0.67);
-			fill(displayColor, 255);
-			color strokeColor = color(255, 150-(20*intensity));
-			stroke(strokeColor);
-			strokeWeight(1 + (scoreGlobal/300));
-			rectMode(CENTER);
-			square(this.ubicacion.x, this.ubicacion.y, this.radio);
-		}
-		*/
 	}
 
 	boolean checkOffScreen() {
-		//return abs(this.ubicacion.x) > width/2  - this.radio || abs(this.ubicacion.y) > height/2  - this.radio;
-		return this.ubicacion.z > 550;
+		return this.ubicacion.z > 1000;
 	}
-
 }
