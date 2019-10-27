@@ -7,7 +7,7 @@ int screenHeight = 768;
 Minim minim;
 AudioPlayer song;
 FFT fft;
-String songName = "lifetime.mp3";
+String songName = "hydrogen.mp3";
 
 // Variables que definen las "zonas" del espectro
 // Por ejemplo, para graves, tomamos solo el primer 4% del espectro total
@@ -58,6 +58,7 @@ void draw() {
 	// first perform a forward fft on one of song's buffers
 	fft.forward(song.mix);
 
+	// Cada segundo se crean cinco nuevos poligonos
 	int tiempoActual = millis();
 	if (tiempoActual - tiempoAnterior >= 1000) {
 		for (int i=0; i<5; i++) {
@@ -66,9 +67,6 @@ void draw() {
 		tiempoAnterior = millis();
 	}
 	//println("Size: "+poligonos.size());
-	oldScoreLow = scoreLow;
-	oldScoreMid = scoreMid;
-	oldScoreHi = scoreHi;
 
 	scoreLow = 0;
 	scoreMid = 0;
@@ -87,7 +85,7 @@ void draw() {
 	}
 
 	/* 
-		Rectangulos a ambos lados de la pantalla, scoreHi se utiliza para definir la cantidad de verde
+		Rectangulos a ambos lados de la pantalla, scoreLow se utiliza para definir la cantidad de verde
 		del color de ambos rectangulos.
 	*/
 
