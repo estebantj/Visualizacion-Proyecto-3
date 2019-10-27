@@ -26,7 +26,7 @@ class Poligono {
     	stroke(strokeColor);
     	strokeWeight(6);
     	
-    	color displayColor = color(scoreLow*0.67, 0, 0, intensity*5);
+    	color displayColor = color(scoreHi, 0, 0);
     	fill(displayColor, 255);
     	
 		translate(this.ubicacion.x, this.ubicacion.y, this.ubicacion.z);
