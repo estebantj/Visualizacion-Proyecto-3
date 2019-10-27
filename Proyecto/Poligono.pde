@@ -22,9 +22,9 @@ class Poligono {
 	void show(float scoreLow, float scoreMid, float scoreHi, float intensity) {
 		pushMatrix();
 		
-		color strokeColor = color(50, 0, scoreMid);
+		color strokeColor = color(30, 0, scoreMid);
     	stroke(strokeColor);
-    	strokeWeight(4);
+    	strokeWeight(6);
     	
     	color displayColor = color(scoreLow*0.67, 0, 0, intensity*5);
     	fill(displayColor, 255);

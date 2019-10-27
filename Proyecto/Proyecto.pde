@@ -7,7 +7,7 @@ int screenHeight = 768;
 Minim minim;
 AudioPlayer song;
 FFT fft;
-String songName = "lifetime.mp3";
+String songName = "Doctor.mp3";
 
 // Variables que definen las "zonas" del espectro
 // Por ejemplo, para graves, tomamos solo el primer 4% del espectro total
@@ -90,7 +90,7 @@ void draw() {
 		Rectangulos a ambos lados de la pantalla, scoreHi se utiliza para definir la cantidad de verde
 		del color de ambos rectangulos.
 	*/
-	color displayColor = color(0,scoreHi,0);
+	color displayColor = color(0, 30, scoreHi);
 	fill(displayColor);
 	strokeWeight(0);
 
