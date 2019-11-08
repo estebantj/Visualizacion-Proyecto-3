@@ -14,7 +14,7 @@ class Poligono {
 
 	void update(float volumen) {
 		this.ubicacion.z += (2 + (volumen/100));
-		this.rotacion.x += (volumen/3000);
+		this.rotacion.x -= (volumen/3000);
 		//this.rotacion.y += (volumen/3000);
 	}
 
@@ -22,7 +22,8 @@ class Poligono {
 	void show(float scoreLow, float scoreMid, float scoreHi, float intensity) {
 		pushMatrix();
 		
-		color strokeColor = color(30, 0, scoreMid);
+		// strokeColor = color(30, 0, scoreMid);
+    	color strokeColor = color(30, scoreMid/2, scoreMid);
     	stroke(strokeColor);
     	strokeWeight(6);
     	
